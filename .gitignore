@@ -166,4 +166,6 @@ dist
 !.env.example
 .wrangler/
 
-.vscode_/
+# VSCode version specific setting override files
+
+.vscode/
