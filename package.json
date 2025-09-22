@@ -1,18 +1,31 @@
 {
 	"name": "cf-clipboard",
-	"version": "0.0.0",
-	"private": true,
+	"version": "1.0.0",
+	"description": "基于 Cloudflare Workers 的网络文本共享服务",
+	"main": "src/index.ts",
 	"scripts": {
-		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
-		"start": "wrangler dev",
-		"test": "vitest",
-		"cf-typegen": "wrangler types"
+		"deploy": "wrangler deploy",
+		"db:create": "wrangler d1 create clipboard-db",
+		"db:info": "wrangler d1 info clipboard-db",
+		"db:migrate": "wrangler d1 execute clipboard-db --command=\"CREATE TABLE IF NOT EXISTS clipboard (key TEXT PRIMARY KEY, content TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)\"",
+		"db:migrate:local": "wrangler d1 execute clipboard-db --local --command=\"CREATE TABLE IF NOT EXISTS clipboard (key TEXT PRIMARY KEY, content TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)\"",
+		"db:query": "wrangler d1 execute clipboard-db --command=\"SELECT * FROM clipboard LIMIT 10\"",
+		"db:query:local": "wrangler d1 execute clipboard-db --local --command=\"SELECT * FROM clipboard LIMIT 10\"",
+		"tail": "wrangler tail",
+		"check-bindings": "wrangler dev --inspect-bindings"
 	},
+	"keywords": [
+		"cloudflare",
+		"workers",
+		"clipboard",
+		"text-sharing"
+	],
+	"author": "Your Name",
+	"license": "MIT",
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "^0.8.19",
-		"typescript": "^5.5.2",
-		"vitest": "~3.2.0",
-		"wrangler": "^4.38.0"
+		"@cloudflare/workers-types": "^4.20240208.0",
+		"typescript": "^5.0.0",
+		"wrangler": "^3.0.0"
 	}
 }
