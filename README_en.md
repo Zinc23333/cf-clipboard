@@ -2,6 +2,8 @@
 
 A web-based text sharing service built on Cloudflare Workers, providing simple and easy-to-use text storage and sharing functionality.
 
+> ⚠️ This project contains AI-generated content.
+
 ## Features
 
 - 🚀 **High Performance**: Powered by Cloudflare Workers with global edge network deployment
@@ -9,9 +11,10 @@ A web-based text sharing service built on Cloudflare Workers, providing simple a
 - ⏰ **Auto Expiration**: Supports setting expiration time, automatically deletes expired content
 - 🔐 **Optional Authorization**: Supports TOKEN verification to protect data security
 - 📱 **Responsive Design**: Perfectly adapts to desktop and mobile devices
-- ⚡ **Real-time Editing**: Supports auto-save and real-time preview
+- 🌍 **Multi-language Support**: Supports Chinese, English, Japanese, and Russian interfaces
 - 🎨 **Modern UI**: Beautiful gradient design and smooth animations
 - 🔒 **Password Protection**: Supports setting password protection for content to enhance security
+- 🌙 **Dark Mode**: Supports dark/light theme switching
 
 ## Deployment Instructions
 
@@ -117,14 +120,12 @@ Content-Type: application/json
 - `1d`: Expires in 1 day
 - `3d`: Expires in 3 days (default)
 - `7d`: Expires in 7 days
-- `never`: Never expires
 
 **Response Format**:
 ```json
 {
   "message": "OK",
-  "expires_at": "2025-09-22T11:38:08.925Z",
-  "expires_in": "86400s"
+  "expires_at": "2025-09-22T11:38:08.925Z"
 }
 ```
 
@@ -174,12 +175,13 @@ Authorization: Bearer <your-token>
 
 ### Home Page `/`
 - Enter key name and text content
-- Select expiration time (1 hour - never expires)
+- Select expiration time (1 hour - 7 days)
 - Supports read, write, and delete operations
 - Displays expiration time and remaining time
 - Provides quick operations: random key generation, link copying, etc.
 - Keyboard shortcuts: Ctrl+S to save, Ctrl+R to read
 - Dark/light theme switching
+- Multi-language support
 
 ### Detail Page `/detail/<key>`
 - Focused document editing interface
@@ -210,40 +212,6 @@ The system is configured with a scheduled task that performs expired content cle
 3. **HTTPS**: Automatically enabled via Cloudflare
 4. **CORS Control**: Restricts cross-origin requests
 5. **Input Validation**: Strict key name and content validation
-
-## Development Commands
-
-```bash
-# Local development
-npm run dev
-
-# Deploy to Cloudflare
-npm run deploy
-
-# Create database
-npm run db:create
-
-# View database information
-npm run db:info
-
-# Initialize database schema (production environment)
-npm run db:migrate
-
-# Initialize database schema (local environment)
-npm run db:migrate:local
-
-# Query database content (production environment)
-npm run db:query
-
-# Query database content (local environment)
-npm run db:query:local
-
-# View real-time logs
-npm run tail
-
-# Check bindings
-npm run check-bindings
-```
 
 ## License
 

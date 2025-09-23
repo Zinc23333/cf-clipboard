@@ -16,7 +16,7 @@
 	 */
 	"d1_databases": [
 		{
-			"binding": "DB",
+			"binding": "DB",  // Don't change it
 			"database_name": "clipboard-db",
 			"database_id": "7ef10d58-041f-4e84-af8a-9d6dd2801fb8"  // ! Change it
 		}
