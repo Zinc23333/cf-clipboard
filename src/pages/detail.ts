@@ -1,5 +1,5 @@
 import { Env } from '../types';
-import { t } from '../i18n';
+import { t, translations } from '../i18n';
 
 // 生成详细页面HTML
 export const generateDetailPage = (key: string, env: Env) => {
@@ -599,6 +599,60 @@ export const generateDetailPage = (key: string, env: Env) => {
   </div>
 
   <script>
+    // 注入翻译数据
+    window.translationsData = ${JSON.stringify(translations)};
+    
+    // 获取当前语言
+    function getCurrentLanguage() {
+      return localStorage.getItem('language') || 'zh';
+    }
+    
+    // 更新页面语言
+    function updatePageLanguage(lang) {
+      // 更新localStorage中的语言设置
+      localStorage.setItem('language', lang);
+      
+      // 更新所有带有data-i18n属性的元素
+      const elements = document.querySelectorAll('[data-i18n]');
+      
+      elements.forEach(element => {
+        const i18nKey = element.getAttribute('data-i18n');
+        if (i18nKey) {
+          // 处理包含属性的情况，如 data-i18n="key|attribute"
+          if (i18nKey.includes('|')) {
+            const [key, attribute] = i18nKey.split('|');
+            if (attribute === 'placeholder') {
+              element.placeholder = window.translationsData[lang][key] || window.translationsData['zh'][key] || key;
+            } else if (attribute === 'title') {
+              element.title = window.translationsData[lang][key] || window.translationsData['zh'][key] || key;
+            } else if (attribute === 'aria-label') {
+              element.setAttribute('aria-label', window.translationsData[lang][key] || window.translationsData['zh'][key] || key);
+            }
+          } else {
+            // 处理多个键的情况，如 data-i18n="key1;key2|attribute"
+            if (i18nKey.includes(';')) {
+              const keys = i18nKey.split(';');
+              let text = '';
+              keys.forEach(k => {
+                if (k.includes('|')) {
+                  const [key, attribute] = k.split('|');
+                  if (attribute === 'title') {
+                    text += (window.translationsData[lang][key] || window.translationsData['zh'][key] || key);
+                  }
+                } else {
+                  text += (window.translationsData[lang][k] || window.translationsData['zh'][k] || k);
+                }
+              });
+              element.textContent = text;
+            } else {
+              // 普通情况，直接更新文本内容
+              element.textContent = window.translationsData[lang][i18nKey] || window.translationsData['zh'][i18nKey] || i18nKey;
+            }
+          }
+        }
+      });
+    }
+    
     // 主题切换功能
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
@@ -673,12 +727,14 @@ export const generateDetailPage = (key: string, env: Env) => {
     
     function updateCharCount() {
       const content = document.getElementById('content').value;
-      document.getElementById('char-count').textContent = \`${t('detail.charCount').replace('{count}', '\${content.length}')}\`;
+      const lang = getCurrentLanguage();
+      document.getElementById('char-count').textContent = (window.translationsData[lang]['detail.charCount'] || '${t('detail.charCount')}').replace('{count}', content.length);
     }
     
     function updateLastSaved() {
       const now = new Date();
-      document.getElementById('last-saved').textContent = t('detail.lastSaved').replace('{time}', now.toLocaleTimeString());
+      const lang = getCurrentLanguage();
+      document.getElementById('last-saved').textContent = (window.translationsData[lang]['detail.lastSaved'] || '${t('detail.lastSaved')}').replace('{time}', now.toLocaleTimeString());
     }
     
     // 解锁受保护的内容
@@ -1028,31 +1084,23 @@ export const generateDetailPage = (key: string, env: Env) => {
       }
     });
     
-    // 页面加载时自动加载内容
-    document.addEventListener('DOMContentLoaded', () => {
-      // 确保初始状态正确设置
-      document.getElementById('loading-section').style.display = 'block';
-      document.getElementById('password-section').style.display = 'none';
-      document.getElementById('content-area').style.display = 'none';
+    // DOM加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 应用已保存的语言设置
+      const savedLanguage = getCurrentLanguage();
+      if (savedLanguage !== 'zh') {
+        updatePageLanguage(savedLanguage);
+      }
       
+      // 加载内容
       loadContent();
+      
+      // 监听内容变化
+      const contentElement = document.getElementById('content');
+      if (contentElement) {
+        contentElement.addEventListener('input', updateCharCount);
+      }
     });
-    
-    ${requireAuth ? `
-    // 令牌输入后自动重新加载
-    document.getElementById('token').addEventListener('input', () => {
-      clearTimeout(saveTimeout);
-      setTimeout(() => {
-        // 重新加载前重置状态
-        document.getElementById('loading-section').style.display = 'block';
-        document.getElementById('password-section').style.display = 'none';
-        document.getElementById('content-area').style.display = 'none';
-        document.getElementById('status').style.display = 'none';
-        
-        loadContent();
-      }, 500);
-    });
-    ` : ''}
   </script>
 </body>
 </html>`;
