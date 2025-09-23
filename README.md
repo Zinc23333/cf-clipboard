@@ -1,96 +1,96 @@
 # CF Clipboard
 
-基于 Cloudflare Workers 的网络文本共享服务，提供简单易用的文本存储和共享功能。
+A web-based text sharing service built on Cloudflare Workers, providing simple and easy-to-use text storage and sharing functionality.
 
-> ⚠️ 本项目绝大部分代码由AI生成。
+> ⚠️ This project contains AI-generated content.
 
-## 功能特性
+## Features
 
-- 🚀 **高性能**: 基于 Cloudflare Workers，全球边缘节点部署
-- 💾 **持久化存储**: 使用 D1 数据库存储文本内容
-- ⏰ **自动过期**: 支持设置有效时间，过期自动删除
-- 🔐 **可选授权**: 支持 TOKEN 验证保护数据安全
-- 📱 **响应式设计**: 完美适配桌面端和移动端
-- 🌍 **多语言支持**: 支持中文、英文、日文和俄文界面
-- 🎨 **现代化界面**: 美观的渐变设计和流畅动画
-- 🔒 **密码保护**: 支持为内容设置密码保护，增强安全性
-- 🌙 **深色模式**: 支持深色/浅色主题切换
+- 🚀 **High Performance**: Powered by Cloudflare Workers with global edge network deployment
+- 💾 **Persistent Storage**: Uses D1 database to store text content
+- ⏰ **Auto Expiration**: Supports setting expiration time, automatically deletes expired content
+- 🔐 **Optional Authorization**: Supports TOKEN verification to protect data security
+- 📱 **Responsive Design**: Perfectly adapts to desktop and mobile devices
+- 🌍 **Multi-language Support**: Supports Chinese, English, Japanese, and Russian interfaces
+- 🎨 **Modern UI**: Beautiful gradient design and smooth animations
+- 🔒 **Password Protection**: Supports setting password protection for content to enhance security
+- 🌙 **Dark Mode**: Supports dark/light theme switching
 
-## 部署说明
+## Deployment Instructions
 
-### 前置要求
+### Prerequisites
 
-- Node.js (推荐 v18+)
+- Node.js (v18+ recommended)
 - Wrangler CLI (`npm install -g wrangler`)
-- Cloudflare 账户
+- Cloudflare account
 
-### 部署步骤
+### Deployment Steps
 
-1. 克隆项目:
+1. Clone the project:
    ```bash
    git clone <repository-url>
    cd cf-clipboard
    ```
 
-2. 安装依赖:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. 登录 Cloudflare:
+3. Login to Cloudflare:
    ```bash
    wrangler login
    ```
 
-4. 创建 D1 数据库:
+4. Create D1 database:
    ```bash
    npm run db:create
    ```
-   记录输出中的 `database_id`。
+   Record the `database_id` from the output.
 
-5. 更新 `wrangler.jsonc` 配置文件:
-   - 将上一步中的 `database_id` 填入 `d1_databases` 配置中
+5. Update `wrangler.jsonc` configuration file:
+   - Fill in the `database_id` from the previous step into the `d1_databases` configuration
 
-6. 初始化数据库表结构:
+6. Initialize database schema:
    ```bash
-   # 生产环境
+   # Production environment
    npm run db:migrate
    
-   # 本地开发环境
+   # Local development environment
    npm run db:migrate:local
    ```
 
-7. 本地开发:
+7. Local development:
    ```bash
    npm run dev
    ```
 
-8. 部署到 Cloudflare:
+8. Deploy to Cloudflare:
    ```bash
    npm run deploy
    ```
 
-### 环境变量配置
+### Environment Variable Configuration
 
-如需启用 TOKEN 验证，在 `wrangler.jsonc` 中取消注释并设置 `TOKEN` 变量:
+To enable TOKEN verification, uncomment and set the `TOKEN` variable in `wrangler.jsonc`:
 ```json
 "vars": { 
   "TOKEN": "your-secret-token-here"
 }
 ```
 
-## API 接口
+## API Endpoints
 
-### 1. 读取内容
+### 1. Read Content
 
-#### 公开内容读取
+#### Public Content Reading
 ```
 GET /api/read/<key>
 ```
-- 成功：返回文本内容（200），响应头包含 `X-Expires-At`
-- 失败：返回 404（键不存在或已过期）或 401（未授权）
+- Success: Returns text content (200) with `X-Expires-At` in response headers
+- Failure: Returns 404 (key not found or expired) or 401 (unauthorized)
 
-#### 密码保护内容读取
+#### Password-protected Content Reading
 ```
 POST /api/read/<key>
 Content-Type: application/json
@@ -99,29 +99,29 @@ Content-Type: application/json
   "password": "your-password"
 }
 ```
-- 成功：返回文本内容（200），响应头包含 `X-Expires-At`
-- 失败：返回 404（键不存在或已过期）或 401（密码错误）
+- Success: Returns text content (200) with `X-Expires-At` in response headers
+- Failure: Returns 404 (key not found or expired) or 401 (password incorrect)
 
-### 2. 写入内容
+### 2. Write Content
 ```
 POST /api/write/<key>
 Content-Type: application/json
 
 {
-  "content": "文本内容",
-  "password": "可选密码",
-  "expires": "过期时间"
+  "content": "text content",
+  "password": "optional password",
+  "expires": "expiration time"
 }
 ```
 
-**过期时间参数 (`expires`)**:
-- `1h`: 1小时后过期
-- `12h`: 12小时后过期
-- `1d`: 1天后过期
-- `3d`: 3天后过期（默认）
-- `7d`: 7天后过期
+**Expiration Time Parameters (`expires`)**:
+- `1h`: Expires in 1 hour
+- `12h`: Expires in 12 hours
+- `1d`: Expires in 1 day
+- `3d`: Expires in 3 days (default)
+- `7d`: Expires in 7 days
 
-**响应格式**:
+**Response Format**:
 ```json
 {
   "message": "OK",
@@ -129,25 +129,25 @@ Content-Type: application/json
 }
 ```
 
-### 3. 删除内容
+### 3. Delete Content
 ```
 DELETE /api/delete/<key>
 Content-Type: application/json
 
 {
-  "password": "可选密码（如果内容有密码保护）"
+  "password": "optional password (if content is password-protected)"
 }
 ```
-- 成功：返回 "OK"（200）
-- 失败：返回 404（键不存在）或 401（未授权/密码错误）
+- Success: Returns "OK" (200)
+- Failure: Returns 404 (key not found) or 401 (unauthorized/password incorrect)
 
-### 4. 列出所有键
+### 4. List All Keys
 ```
 GET /api/list
 ```
-返回所有有效（未过期）的键的元数据信息。
+Returns metadata information for all valid (non-expired) keys.
 
-**响应格式**:
+**Response Format**:
 ```json
 {
   "total": 2,
@@ -164,56 +164,63 @@ GET /api/list
 }
 ```
 
-### 授权验证
+### Authorization
 
-如果设置了环境变量 `TOKEN`，需要在请求头中添加：
+If the environment variable `TOKEN` is set, add the following to the request header:
 ```
 Authorization: Bearer <your-token>
 ```
 
-## 页面功能
+## Web Pages
 
-### 主页 `/`
-- 输入键名和文本内容
-- 选择有效时间（1小时-7天）
-- 支持读取、写入、删除操作
-- 显示过期时间和剩余时间
-- 提供快速操作：随机键名生成、链接复制等
-- 键盘快捷键：Ctrl+S 保存，Ctrl+R 读取
-- 暗色/亮色主题切换
-- 多语言支持
+### Home Page `/`
+- Enter key name and text content
+- Select expiration time (1 hour - 7 days)
+- Supports read, write, and delete operations
+- Displays expiration time and remaining time
+- Provides quick operations: random key generation, link copying, etc.
+- Keyboard shortcuts: Ctrl+S to save, Ctrl+R to read
+- Dark/light theme switching
+- Multi-language support
 
-## 定时任务
+### Detail Page `/detail/<key>`
+- Focused document editing interface
+- Adjustable expiration time settings
+- Displays current expiration status
+- Auto-save functionality (2-second delay)
+- Password protection support
 
-系统配置了定时任务，每3天执行一次过期内容清理：
+## Scheduled Tasks
+
+The system is configured with a scheduled task that performs expired content cleanup every 3 days:
 ```
 0 0 */3 * *
 ```
 
-## 技术架构
+## Technical Architecture
 
-- **前端**: 原生 HTML/CSS/JavaScript（无框架）
-- **后端**: Cloudflare Workers + TypeScript
-- **数据库**: Cloudflare D1 (SQLite)
-- **构建工具**: Wrangler CLI
-- **语言**: TypeScript
+- **Frontend**: Native HTML/CSS/JavaScript (no framework)
+- **Backend**: Cloudflare Workers + TypeScript
+- **Database**: Cloudflare D1 (SQLite)
+- **Build Tool**: Wrangler CLI
+- **Language**: TypeScript
 
-## 安全特性
+## Security Features
 
-1. **可选 TOKEN 验证**: 通过环境变量配置访问令牌
-2. **密码保护**: 支持为单个内容设置密码保护
-3. **HTTPS**: 通过 Cloudflare 自动启用 HTTPS
-4. **CORS 控制**: 限制跨域请求
-5. **输入验证**: 严格的键名和内容验证
+1. **Optional TOKEN Verification**: Configure access tokens via environment variables
+2. **Password Protection**: Supports setting password protection for individual content
+3. **HTTPS**: Automatically enabled via Cloudflare
+4. **CORS Control**: Restricts cross-origin requests
+5. **Input Validation**: Strict key name and content validation
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 支持
+## Support
 
-如果您觉得这个项目有用，请给它一个 ⭐ 星标！
+If you find this project useful, please give it a ⭐ star!
