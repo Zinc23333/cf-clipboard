@@ -33,6 +33,30 @@ export const validatePassword = (storedPassword: string, providedPassword: strin
   return storedPassword === providedPassword;
 };
 
+// 验证内容长度
+const validateContentLength = (content: string, maxLength?: string): { valid: boolean; error?: string } => {
+  // 如果没有设置MAX_CONTENT_LENGTH，则没有限制
+  if (!maxLength) {
+    return { valid: true };
+  }
+
+  // 解析最大长度
+  const maxLen = parseInt(maxLength, 10);
+  if (isNaN(maxLen) || maxLen <= 0) {
+    return { valid: true }; // 如果解析失败或值无效，则无限制
+  }
+
+  // 检查内容长度
+  if (content.length > maxLen) {
+    return { 
+      valid: false, 
+      error: `Content length exceeds maximum allowed length of ${maxLen} characters` 
+    };
+  }
+
+  return { valid: true };
+};
+
 // 处理API路由
 export const handleAPI = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> => {
   const url = new URL(request.url);
@@ -187,6 +211,12 @@ export const handleAPI = async (request: Request, env: Env, ctx: ExecutionContex
     // 检查内容是否为空
     if (content === undefined || content === null || content.trim() === '') {
       return new Response('Content cannot be empty', { status: 400 });
+    }
+    
+    // 检查内容长度是否超过限制
+    const lengthValidation = validateContentLength(content, env.MAX_CONTENT_LENGTH);
+    if (!lengthValidation.valid) {
+      return new Response(lengthValidation.error, { status: 400 });
     }
     
     const now = Date.now();

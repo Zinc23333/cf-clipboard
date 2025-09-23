@@ -243,6 +243,25 @@ export const generateDetailPage = (key: string, env: Env) => {
       color: #e2e8f0;
     }
     
+    .content-length-info {
+      text-align: right;
+      font-size: 14px;
+      color: #718096;
+      margin-top: 5px;
+    }
+    
+    body.dark-mode .content-length-info {
+      color: #a0aec0;
+    }
+    
+    .content-length-info.warning {
+      color: #dd6b20;
+    }
+    
+    .content-length-info.error {
+      color: #e53e3e;
+    }
+    
     .editor textarea:focus {
       outline: none;
       border-color: #667eea;
@@ -581,6 +600,9 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       <div class="editor">
         <textarea id="content" placeholder="${t('detail.content.loading')}" readonly data-i18n="detail.content.loading|placeholder"></textarea>
+        ${env.MAX_CONTENT_LENGTH ? `<div class="content-length-info">
+          <span id="current-length">0</span> / ${env.MAX_CONTENT_LENGTH}
+        </div>` : ''}
       </div>
       
       <div class="editor-actions">
@@ -730,6 +752,25 @@ export const generateDetailPage = (key: string, env: Env) => {
       const content = document.getElementById('content').value;
       const lang = getCurrentLanguage();
       document.getElementById('char-count').textContent = (window.translationsData[lang]['detail.charCount'] || '${t('detail.charCount')}').replace('{count}', content.length);
+      ${env.MAX_CONTENT_LENGTH ? `
+      const currentLength = content.length;
+      const maxLength = ${env.MAX_CONTENT_LENGTH};
+      const lengthInfo = document.getElementById('current-length');
+      
+      if (lengthInfo) {
+        lengthInfo.textContent = currentLength;
+        
+        // 移除所有状态类
+        lengthInfo.parentElement.classList.remove('warning', 'error');
+        
+        // 根据内容长度添加状态类
+        if (currentLength > maxLength) {
+          lengthInfo.parentElement.classList.add('error');
+        } else if (currentLength > maxLength * 0.9) {
+          lengthInfo.parentElement.classList.add('warning');
+        }
+      }
+      ` : ''}
     }
     
     function updateLastSaved() {
@@ -773,6 +814,11 @@ export const generateDetailPage = (key: string, env: Env) => {
           
           isLoaded = true;
           isUnlocked = true;
+          
+          // 保存密码以便后续操作使用
+          if (document.getElementById('password-input') instanceof HTMLInputElement) {
+            document.getElementById('password-input').value = password;
+          }
           
           // 显示过期时间信息
           const expiresAt = response.headers.get('X-Expires-At');
@@ -868,45 +914,32 @@ export const generateDetailPage = (key: string, env: Env) => {
       }
     }
     
+    // 保存内容
     async function saveContent() {
-      hideExpiryInfo();
-      if (!isLoaded || !isUnlocked) {
-        showStatus(window.translationsData[getCurrentLanguage()]['detail.password.title'] || '${t('detail.password.title')}', 'error');
-        return;
-      }
-      
-      const contentElement = document.getElementById('content');
-      const expiresElement = document.getElementById('expires');
-      const passwordInputElement = document.getElementById('password-input');
+      const content = document.getElementById('content').value;
+      const password = isUnlocked && document.getElementById('password-input') instanceof HTMLInputElement 
+        ? document.getElementById('password-input').value 
+        : ''; // 详情页不提供密码修改功能
+      const expires = document.getElementById('expires').value;
       const lang = getCurrentLanguage();
       
-      if (!(contentElement instanceof HTMLTextAreaElement) || 
-          !(expiresElement instanceof HTMLSelectElement)) {
-        showStatus(window.translationsData[lang]['status.error'] || '${t('status.error')}', 'error');
+      ${env.MAX_CONTENT_LENGTH ? `
+      // 验证内容长度
+      const maxLength = ${env.MAX_CONTENT_LENGTH};
+      if (content.length > maxLength) {
+        showStatus(
+          (window.translationsData[lang]['content.error.toolong'] || '${t('content.error.toolong')}').replace('{maxLength}', maxLength).replace('{currentLength}', content.length),
+          'error'
+        );
         return;
       }
-      
-      const content = contentElement.value;
-      const expires = expiresElement.value;
-      const password = passwordInputElement instanceof HTMLInputElement ? passwordInputElement.value : '';
-      
-      // 验证键名
-      if (!isValidKey(key)) {
-        showStatus(window.translationsData[lang]['key.error.invalid'] || '${t('key.error.invalid')}', 'error');
-        return;
-      }
-      
-      // 检查内容是否为空
-      if (content.trim() === '') {
-        showStatus(window.translationsData[lang]['content.error.empty'] || '${t('content.error.empty')}', 'error');
-        return;
-      }
+      ` : ''}
       
       try {
         const requestData = {
+          content: content,
           password: password,
-          expires: expires,
-          content: content
+          expires: expires
         };
         
         const response = await fetch(\`/api/write/\${encodeURIComponent(key)}\`, {
@@ -1023,18 +1056,17 @@ export const generateDetailPage = (key: string, env: Env) => {
         if (response.ok) {
           document.getElementById('content').value = '';
           originalContent = '';
-          updateCharCount();
-          
-          // 清除过期时间显示
-          document.getElementById('expiry-display').style.display = 'none';
+          updateLastSaved();
           showStatus(window.translationsData[lang]['detail.delete.success'] || '${t('detail.delete.success')}', 'success');
-        } else if (response.status === 404) {
-          showStatus(window.translationsData[lang]['status.delete.notFound'] || '${t('status.delete.notFound')}', 'error');
+          
+          // 重置状态
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
         } else if (response.status === 401) {
           showStatus(window.translationsData[lang]['status.read.wrongPassword'] || '${t('status.read.wrongPassword')}', 'error');
-        } else if (response.status === 400) {
-          const errorMessage = await response.text();
-          showStatus(errorMessage, 'error');
+        } else if (response.status === 404) {
+          showStatus(window.translationsData[lang]['status.delete.notFound'] || '${t('status.delete.notFound')}', 'error');
         } else {
           showStatus(window.translationsData[lang]['detail.delete.error'] || '${t('detail.delete.error')}', 'error');
         }

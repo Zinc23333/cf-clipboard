@@ -181,6 +181,25 @@ export const generateHomePage = (env: Env) => {
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
     
+    .content-length-info {
+      text-align: right;
+      font-size: 14px;
+      color: #718096;
+      margin-top: 5px;
+    }
+    
+    body.dark-mode .content-length-info {
+      color: #a0aec0;
+    }
+    
+    .content-length-info.warning {
+      color: #dd6b20;
+    }
+    
+    .content-length-info.error {
+      color: #e53e3e;
+    }
+    
     .button-group {
       display: flex;
       gap: 12px;
@@ -623,6 +642,9 @@ export const generateHomePage = (env: Env) => {
     <div class="form-group">
       <label for="content" data-i18n="content.label">${t('content.label')}</label>
       <textarea id="content" placeholder="${t('content.placeholder')}" data-i18n="content.placeholder|placeholder"></textarea>
+      ${env.MAX_CONTENT_LENGTH ? `<div class="content-length-info">
+        <span id="current-length">0</span> / ${env.MAX_CONTENT_LENGTH}
+      </div>` : ''}
     </div>
     
     <div class="button-group">
@@ -785,7 +807,14 @@ export const generateHomePage = (env: Env) => {
       } else {
         // 如果键名有效，启用相关按钮
         readBtn.disabled = false;
+        ${env.MAX_CONTENT_LENGTH ? `
+        // 检查内容长度是否超过限制
+        const contentLength = document.getElementById('content').value.length;
+        const maxLength = ${env.MAX_CONTENT_LENGTH};
+        writeBtn.disabled = content === '' || contentLength > maxLength;
+        ` : `
         writeBtn.disabled = content === ''; // 内容为空时禁用写入按钮
+        `}
         deleteBtn.disabled = false;
         copyLink.style.pointerEvents = 'auto';
         copyLink.style.opacity = '1';
@@ -824,7 +853,38 @@ export const generateHomePage = (env: Env) => {
     // 监听内容输入
     document.getElementById('content').addEventListener('input', function() {
       updateButtonStates();
+      ${env.MAX_CONTENT_LENGTH ? `updateContentLength();` : ''}
     });
+    
+    ${env.MAX_CONTENT_LENGTH ? `
+    function updateContentLength() {
+      const content = document.getElementById('content').value;
+      const currentLength = content.length;
+      const maxLength = ${env.MAX_CONTENT_LENGTH};
+      const lengthInfo = document.getElementById('current-length');
+      
+      lengthInfo.textContent = currentLength;
+      
+      // 移除所有状态类
+      lengthInfo.parentElement.classList.remove('warning', 'error');
+      
+      // 根据内容长度添加状态类
+      if (currentLength > maxLength) {
+        lengthInfo.parentElement.classList.add('error');
+      } else if (currentLength > maxLength * 0.9) {
+        lengthInfo.parentElement.classList.add('warning');
+      }
+      
+      // 更新写入按钮状态
+      const writeBtn = document.getElementById('write-btn');
+      if (currentLength > maxLength) {
+        writeBtn.disabled = true;
+      } else {
+        const key = document.getElementById('key').value.trim();
+        writeBtn.disabled = !isValidKey(key);
+      }
+    }
+    ` : ''}
     
     function getHeaders() {
       const headers = { 'Content-Type': 'application/json' };
@@ -955,8 +1015,8 @@ export const generateHomePage = (env: Env) => {
     async function writeContent() {
       const key = document.getElementById('key').value.trim();
       const content = document.getElementById('content').value;
-      const expires = document.getElementById('expires').value;
       const password = document.getElementById('password').value || '';
+      const expires = document.getElementById('expires').value;
       const lang = getCurrentLanguage();
       
       // 验证键名
@@ -970,19 +1030,31 @@ export const generateHomePage = (env: Env) => {
         return;
       }
       
-      // 检查内容是否为空
-      if (content.trim() === '') {
-        showError(window.translationsData[lang]['content.error.empty'] || '${t('content.error.empty')}');
+      // 验证内容
+      if (!content || content.trim() === '') {
+        showStatus(window.translationsData[lang]['content.error.empty'] || '${t('content.error.empty')}', 'error');
         return;
       }
       
+      ${env.MAX_CONTENT_LENGTH ? `
+      // 验证内容长度
+      const maxLength = ${env.MAX_CONTENT_LENGTH};
+      if (content.length > maxLength) {
+        showStatus(
+          (window.translationsData[lang]['content.error.toolong'] || '${t('content.error.toolong')}').replace('{maxLength}', maxLength).replace('{currentLength}', content.length),
+          'error'
+        );
+        return;
+      }
+      ` : ''}
+      
+      const requestData = {
+        content: content,
+        password: password,
+        expires: expires
+      };
+      
       try {
-        const requestData = {
-          password: password,
-          expires: expires,
-          content: content
-        };
-        
         const response = await fetch(\`/api/write/\${encodeURIComponent(key)}\`, {
           method: 'POST',
           headers: getHeaders(),

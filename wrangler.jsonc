@@ -37,10 +37,13 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 * 如果要使用密钥令牌来保护您的API，请将其设置为此处。
 	 * If you want to use a secret token to protect your API, you can set it here.
+	 * 或者，你可以使用更加安全的 -e 参数添加
+	 * or, you can use a more secure -e parameter to add
 	 */
-	// "vars": { 
-	//     "TOKEN": "your-secret-token-here"  // 取消注释并设置您的令牌
-	// },
+	"vars": { 
+		"MAX_CONTENT_LENGTH": 1048576  // Max content length (default: 1MB)
+	    // "TOKEN": "your-secret-token-here"  // uncomment this line to use a secret token
+	},
 	/**
 	
 	/**

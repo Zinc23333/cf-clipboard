@@ -2,6 +2,7 @@
 export interface Env {
   DB: D1Database;
   TOKEN?: string;
+  MAX_CONTENT_LENGTH?: string;
 }
 
 export interface ClipboardEntry {
