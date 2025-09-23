@@ -10,7 +10,7 @@ export const generateHomePage = (env: Env) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${t('site.title')}</title>
+  <title data-i18n="site.title">${t('site.title')}</title>
   <style>
     * {
       margin: 0;
@@ -567,58 +567,66 @@ export const generateHomePage = (env: Env) => {
     <div class="header">
       <div class="header-actions"></div>
       <div class="header-content">
-        <h1>📋 CF Clipboard</h1>
-        <p>${t('site.description')}</p>
+        <h1 data-i18n="site.title">📋 CF Clipboard</h1>
+        <p data-i18n="site.description">${t('site.description')}</p>
       </div>
       <div class="header-actions">
+        <div class="language-selector" style="position: relative; display: inline-block;">
+          <button class="theme-toggle" id="languageToggle" aria-label="${t('btn.languageToggle')}" style="margin-right: 10px;">🌐</button>
+          <div id="languageDropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 5px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 120px;">
+            <a href="#" class="language-option" data-lang="zh" style="display: block; padding: 12px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #eee;">🇨🇳 中文</a>
+            <a href="#" class="language-option" data-lang="en" style="display: block; padding: 12px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #eee;">🇺🇸 English</a>
+            <a href="#" class="language-option" data-lang="ja" style="display: block; padding: 12px 16px; text-decoration: none; color: #333;">🇯🇵 日本語</a>
+          </div>
+        </div>
         <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}">🌙</button>
       </div>
     </div>
     
     ${requireAuth ? `
     <div class="form-group">
-      <label for="token">${t('auth.token')}</label>
-      <input type="password" id="token" placeholder="${t('auth.token.placeholder')}">
+      <label for="token" data-i18n="auth.token">${t('auth.token')}</label>
+      <input type="password" id="token" placeholder="${t('auth.token.placeholder')}" data-i18n="auth.token.placeholder|placeholder">
     </div>
     ` : ''}
     
     <div class="form-group">
-      <label for="key">${t('key.label')}</label>
+      <label for="key" data-i18n="key.label">${t('key.label')}</label>
       <div class="input-group">
-        <input type="text" id="key" placeholder="${t('key.placeholder')}">
-        <button class="btn-icon" onclick="generateRandomKey()" title="${t('btn.generateKey')}">${t('key.generate')}</button>
-        <button class="btn-icon" onclick="copyKey()" title="${t('btn.copyKey')}">${t('key.copy')}</button>
+        <input type="text" id="key" placeholder="${t('key.placeholder')}" data-i18n="key.placeholder|placeholder">
+        <button class="btn-icon" onclick="generateRandomKey()" title="${t('btn.generateKey')}" data-i18n="key.generate;btn.generateKey|title">${t('key.generate')}</button>
+        <button class="btn-icon" onclick="copyKey()" title="${t('btn.copyKey')}" data-i18n="key.copy;btn.copyKey|title">${t('key.copy')}</button>
       </div>
       <div id="key-error" style="color: #e53e3e; font-size: 16px; margin-top: 5px; display: none;"></div>
     </div>
     
     <div class="form-row">
       <div class="form-col">
-        <label for="expires">${t('expires.label')}</label>
+        <label for="expires" data-i18n="expires.label">${t('expires.label')}</label>
         <select id="expires">
-          <option value="1h">${t('expires.1h')}</option>
-          <option value="12h">${t('expires.12h')}</option>
-          <option value="1d">${t('expires.1d')}</option>
-          <option value="3d" selected>${t('expires.3d')}</option>
-          <option value="7d">${t('expires.7d')}</option>
+          <option value="1h" data-i18n="expires.1h">${t('expires.1h')}</option>
+          <option value="12h" data-i18n="expires.12h">${t('expires.12h')}</option>
+          <option value="1d" data-i18n="expires.1d">${t('expires.1d')}</option>
+          <option value="3d" selected data-i18n="expires.3d">${t('expires.3d')}</option>
+          <option value="7d" data-i18n="expires.7d">${t('expires.7d')}</option>
         </select>
       </div>
       
       <div class="form-col">
-        <label for="password">${t('password.label')}</label>
-        <input type="password" id="password" placeholder="${t('password.placeholder')}">
+        <label for="password" data-i18n="password.label">${t('password.label')}</label>
+        <input type="password" id="password" placeholder="${t('password.placeholder')}" data-i18n="password.placeholder|placeholder">
       </div>
     </div>
     
     <div class="form-group">
-      <label for="content">${t('content.label')}</label>
-      <textarea id="content" placeholder="${t('content.placeholder')}"></textarea>
+      <label for="content" data-i18n="content.label">${t('content.label')}</label>
+      <textarea id="content" placeholder="${t('content.placeholder')}" data-i18n="content.placeholder|placeholder"></textarea>
     </div>
     
     <div class="button-group">
-      <button class="btn-action btn-primary" onclick="readContent()" id="read-btn">${t('btn.read')}</button>
-      <button class="btn-action btn-secondary" onclick="writeContent()" id="write-btn">${t('btn.write')}</button>
-      <button class="btn-action btn-danger" onclick="deleteContent()" id="delete-btn">${t('btn.delete')}</button>
+      <button class="btn-action btn-primary" onclick="readContent()" id="read-btn" data-i18n="btn.read">${t('btn.read')}</button>
+      <button class="btn-action btn-secondary" onclick="writeContent()" id="write-btn" data-i18n="btn.write">${t('btn.write')}</button>
+      <button class="btn-action btn-danger" onclick="deleteContent()" id="delete-btn" data-i18n="btn.delete">${t('btn.delete')}</button>
     </div>
     
     <div class="status" id="status"></div>
@@ -626,29 +634,29 @@ export const generateHomePage = (env: Env) => {
     <div class="expiry-info" id="expiry-info" style="display: none;">
       <div class="expiry-status">
         <span id="expiry-text"></span>
-        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="${t('btn.copyDetailLink')}" style="display: none;">${t('btn.copyLink')}</button>
+        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="${t('btn.copyDetailLink')}" style="display: none;" data-i18n="btn.copyLink;btn.copyDetailLink|title">${t('btn.copyLink')}</button>
       </div>
     </div>
     
     <div class="quick-actions" style="display: none;">
-      <h3>${t('quickLinks.title')}</h3>
-      <a href="javascript:copyCurrentUrl()" class="quick-link" id="copy-link">${t('btn.copyLink')}</a>
-      <a href="javascript:generateRandomKey()" class="quick-link">${t('key.generate')}</a>
+      <h3 data-i18n="quickLinks.title">${t('quickLinks.title')}</h3>
+      <a href="javascript:copyCurrentUrl()" class="quick-link" id="copy-link" data-i18n="btn.copyLink">${t('btn.copyLink')}</a>
+      <a href="javascript:generateRandomKey()" class="quick-link" data-i18n="key.generate">${t('key.generate')}</a>
     </div>
     
     <!-- 删除确认模态框 -->
     <div id="delete-modal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>${t('modal.delete.title')}</h3>
+          <h3 data-i18n="modal.delete.title">${t('modal.delete.title')}</h3>
           <span class="close" id="close-modal">&times;</span>
         </div>
         <div class="modal-body">
           <p>${t('modal.delete.content', 'zh').replace('{key}', '<span id="delete-key-name"></span>')}</p>
         </div>
         <div class="modal-footer">
-          <button class="btn-action btn-secondary" id="cancel-delete">${t('modal.delete.cancel')}</button>
-          <button class="btn-action btn-danger" id="confirm-delete">${t('modal.delete.confirm')}</button>
+          <button class="btn-action btn-secondary" id="cancel-delete" data-i18n="modal.delete.cancel">${t('modal.delete.cancel')}</button>
+          <button class="btn-action btn-danger" id="confirm-delete" data-i18n="modal.delete.confirm">${t('modal.delete.confirm')}</button>
         </div>
       </div>
     </div>
@@ -1157,6 +1165,39 @@ export const generateHomePage = (env: Env) => {
     // 在 DOMContentLoaded 事件中添加复制按钮的事件监听器
     document.addEventListener('DOMContentLoaded', function() {
       updateButtonStates();
+      
+      // 添加语言切换按钮的事件监听器
+      const languageToggle = document.getElementById('languageToggle');
+      const languageDropdown = document.getElementById('languageDropdown');
+      if (languageToggle && languageDropdown) {
+        languageToggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const isVisible = languageDropdown.style.display === 'block';
+          languageDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // 添加语言选项的点击事件处理
+        const languageOptions = languageDropdown.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+          option.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedLang = this.getAttribute('data-lang');
+            // 这里可以添加语言切换的逻辑
+            console.log('切换到语言:', selectedLang);
+            // 隐藏下拉菜单
+            languageDropdown.style.display = 'none';
+          });
+        });
+        
+        // 点击页面其他区域隐藏语言选择菜单
+        document.addEventListener('click', function(e) {
+          if (languageDropdown.style.display === 'block' && 
+              !languageToggle.contains(e.target) && 
+              !languageDropdown.contains(e.target)) {
+            languageDropdown.style.display = 'none';
+          }
+        });
+      }
       
       // 添加复制详情页链接按钮的事件监听器
       const copyDetailLinkBtn = document.getElementById('copy-detail-link');

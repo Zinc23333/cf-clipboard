@@ -10,7 +10,7 @@ export const generateDetailPage = (key: string, env: Env) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${t('detail.title')} - ${key}</title>
+  <title data-i18n="detail.title">${t('detail.title')} - ${key}</title>
   <style>
     * {
       margin: 0;
@@ -533,32 +533,32 @@ export const generateDetailPage = (key: string, env: Env) => {
   <div class="container">
     <div class="header">
       <div class="title">
-        <h1>📋 ${t('detail.title')}</h1>
+        <h1 data-i18n="detail.title">📋 ${t('detail.title')}</h1>
         <div class="key-name">${key}</div>
       </div>
       <div class="nav-buttons">
-        <a href="/" class="btn btn-outline">← ${t('detail.notFound.create')}</a>
-        <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}">🌙</button>
+        <a href="/" class="btn btn-outline" data-i18n="detail.notFound.create">← ${t('detail.notFound.create')}</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}" data-i18n="btn.themeToggle|aria-label">🌙</button>
       </div>
     </div>
     
     ${requireAuth ? `
     <div class="auth-section">
-      <input type="password" id="token" placeholder="${t('detail.token.placeholder')}">
+      <input type="password" id="token" placeholder="${t('detail.token.placeholder')}" data-i18n="detail.token.placeholder|placeholder">
     </div>
     ` : ''}
     
     <!-- 加载状态 -->
     <div class="loading" id="loading-section">
-      <p>${t('detail.loading')}</p>
+      <p data-i18n="detail.loading">${t('detail.loading')}</p>
     </div>
     
     <!-- 密码输入区域（默认隐藏） -->
     <div class="password-section" id="password-section" style="display: none;">
-      <h3>${t('detail.password.title')}</h3>
-      <p>${t('detail.password.description')}</p>
-      <input type="password" id="password-input" placeholder="${t('detail.password.placeholder')}">
-      <button class="btn btn-secondary" onclick="unlockContent()">${t('detail.password.submit')}</button>
+      <h3 data-i18n="detail.password.title">${t('detail.password.title')}</h3>
+      <p data-i18n="detail.password.description">${t('detail.password.description')}</p>
+      <input type="password" id="password-input" placeholder="${t('detail.password.placeholder')}" data-i18n="detail.password.placeholder|placeholder">
+      <button class="btn btn-secondary" onclick="unlockContent()" data-i18n="detail.password.submit">${t('detail.password.submit')}</button>
       <div class="status" id="password-status"></div>
     </div>
     
@@ -566,20 +566,20 @@ export const generateDetailPage = (key: string, env: Env) => {
     <div id="content-area" style="display: none;">
       <div class="editor-header">
         <div class="editor-controls">
-          <label for="expires">${t('expires.label')}：</label>
+          <label for="expires" data-i18n="expires.label">${t('expires.label')}：</label>
           <select id="expires">
-            <option value="1h">${t('expires.1h')}</option>
-            <option value="12h">${t('expires.12h')}</option>
-            <option value="1d">${t('expires.1d')}</option>
-            <option value="3d" selected>${t('expires.3d')}</option>
-            <option value="7d">${t('expires.7d')}</option>
+            <option value="1h" data-i18n="expires.1h">${t('expires.1h')}</option>
+            <option value="12h" data-i18n="expires.12h">${t('expires.12h')}</option>
+            <option value="1d" data-i18n="expires.1d">${t('expires.1d')}</option>
+            <option value="3d" selected data-i18n="expires.3d">${t('expires.3d')}</option>
+            <option value="7d" data-i18n="expires.7d">${t('expires.7d')}</option>
           </select>
         </div>
         <div class="expiry-display" id="expiry-display" style="display: none;"></div>
       </div>
       
       <div class="editor">
-        <textarea id="content" placeholder="${t('detail.content.loading')}" readonly></textarea>
+        <textarea id="content" placeholder="${t('detail.content.loading')}" readonly data-i18n="detail.content.loading|placeholder"></textarea>
       </div>
       
       <div class="editor-actions">
@@ -588,9 +588,9 @@ export const generateDetailPage = (key: string, env: Env) => {
           <span id="last-saved">${t('detail.lastSaved').replace('{time}', t('status.notSaved'))}</span>
         </div>
         <div class="action-buttons">
-          <button class="btn btn-secondary" onclick="saveContent()" id="save-btn">${t('detail.toolbar.save')}</button>
-          <button class="btn btn-primary" onclick="copyContent()" id="copy-btn">${t('detail.toolbar.copy')}</button>
-          <button class="btn btn-danger" onclick="deleteContent()" id="delete-btn">${t('detail.toolbar.delete')}</button>
+          <button class="btn btn-secondary" onclick="saveContent()" id="save-btn" data-i18n="detail.toolbar.save">${t('detail.toolbar.save')}</button>
+          <button class="btn btn-primary" onclick="copyContent()" id="copy-btn" data-i18n="detail.toolbar.copy">${t('detail.toolbar.copy')}</button>
+          <button class="btn btn-danger" onclick="deleteContent()" id="delete-btn" data-i18n="detail.toolbar.delete">${t('detail.toolbar.delete')}</button>
         </div>
       </div>
     </div>
