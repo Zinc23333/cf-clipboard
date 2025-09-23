@@ -584,8 +584,8 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       <div class="editor-actions">
         <div class="editor-info">
-          <span id="char-count">${t('detail.charCount').replace('{count}', '0')}</span> | 
-          <span id="last-saved">${t('detail.lastSaved').replace('{time}', t('status.notSaved'))}</span>
+          <span id="char-count"></span> | 
+          <span id="last-saved"></span>
         </div>
         <div class="action-buttons">
           <button class="btn btn-secondary" onclick="saveContent()" id="save-btn" data-i18n="detail.toolbar.save">${t('detail.toolbar.save')}</button>
@@ -740,9 +740,10 @@ export const generateDetailPage = (key: string, env: Env) => {
     // 解锁受保护的内容
     async function unlockContent() {
       const password = document.getElementById('password-input').value;
+      const lang = getCurrentLanguage();
       
       if (!password) {
-        showPasswordStatus('${t('detail.password.error')}', 'error');
+        showPasswordStatus(window.translationsData[lang]['detail.password.error'] || '${t('detail.password.error')}', 'error');
         return;
       }
       
@@ -761,7 +762,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           const content = await response.text();
           document.getElementById('content').value = content;
           originalContent = content;
-          document.getElementById('content').placeholder = '${t('detail.content.edit')}';
+          document.getElementById('content').placeholder = window.translationsData[lang]['detail.content.edit'] || '${t('detail.content.edit')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏密码区域，显示内容区域
@@ -776,17 +777,17 @@ export const generateDetailPage = (key: string, env: Env) => {
           const expiresAt = response.headers.get('X-Expires-At');
           showExpiryDisplay(expiresAt);
           
-          showStatus('${t('detail.save.success')}', 'success');
+          showStatus(window.translationsData[lang]['detail.save.success'] || '${t('detail.save.success')}', 'success');
           updateCharCount();
         } else if (response.status === 401) {
-          showPasswordStatus('${t('detail.password.error')}', 'error');
+          showPasswordStatus(window.translationsData[lang]['detail.password.error'] || '${t('detail.password.error')}', 'error');
         } else if (response.status === 404) {
-          showPasswordStatus('${t('detail.notFound.description')}', 'error');
+          showPasswordStatus(window.translationsData[lang]['detail.notFound.description'] || '${t('detail.notFound.description')}', 'error');
         } else {
-          showPasswordStatus('${t('detail.save.error')}', 'error');
+          showPasswordStatus(window.translationsData[lang]['detail.save.error'] || '${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        showPasswordStatus('${t('status.network.error')}', 'error');
+        showPasswordStatus(window.translationsData[lang]['status.network.error'] || '${t('status.network.error')}', 'error');
       }
     }
     
@@ -800,8 +801,8 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       // 验证键名
       if (!isValidKey(key)) {
-        document.getElementById('loading-section').innerHTML = '<p>${t('key.error.invalid')}</p>';
-        showStatus('${t('key.error.invalid')}', 'error');
+        document.getElementById('loading-section').innerHTML = '<p>' + (window.translationsData[getCurrentLanguage()]['key.error.invalid'] || '${t('key.error.invalid')}') + '</p>';
+        showStatus(window.translationsData[getCurrentLanguage()]['key.error.invalid'] || '${t('key.error.invalid')}', 'error');
         return;
       }
       
@@ -817,7 +818,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           // 直接显示内容
           document.getElementById('content').value = content;
           originalContent = content;
-          document.getElementById('content').placeholder = '${t('detail.content.edit')}';
+          document.getElementById('content').placeholder = window.translationsData[getCurrentLanguage()]['detail.content.edit'] || '${t('detail.content.edit')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏加载区域和密码区域，显示内容区域
@@ -831,7 +832,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           const expiresAt = response.headers.get('X-Expires-At');
           showExpiryDisplay(expiresAt);
           
-          showStatus('${t('detail.save.success')}', 'success');
+          showStatus(window.translationsData[getCurrentLanguage()]['detail.save.success'] || '${t('detail.save.success')}', 'success');
           updateCharCount();
         } else if (response.status === 401) {
           // 需要密码，显示密码输入区域
@@ -840,7 +841,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           document.getElementById('content-area').style.display = 'none';
         } else if (response.status === 404) {
           // 直接显示内容区域（新文档）
-          document.getElementById('content').placeholder = '${t('detail.content.new')}';
+          document.getElementById('content').placeholder = window.translationsData[getCurrentLanguage()]['detail.content.new'] || '${t('detail.content.new')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏加载区域和密码区域，显示内容区域
@@ -850,36 +851,37 @@ export const generateDetailPage = (key: string, env: Env) => {
           
           isLoaded = true;
           
-          showStatus('${t('detail.notFound.title')}', 'success');
+          showStatus(window.translationsData[getCurrentLanguage()]['detail.notFound.title'] || '${t('detail.notFound.title')}', 'success');
           updateCharCount();
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           document.getElementById('loading-section').innerHTML = \`<p>\${errorMessage}</p>\`;
           showStatus(errorMessage, 'error');
         } else {
-          document.getElementById('loading-section').innerHTML = '<p>${t('detail.save.error')}</p>';
-          showStatus('${t('detail.save.error')}', 'error');
+          document.getElementById('loading-section').innerHTML = '<p>' + (window.translationsData[getCurrentLanguage()]['detail.save.error'] || '${t('detail.save.error')}') + '</p>';
+          showStatus(window.translationsData[getCurrentLanguage()]['detail.save.error'] || '${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        document.getElementById('loading-section').innerHTML = '<p>${t('status.network.error')}</p>';
-        showStatus('${t('status.network.error')}', 'error');
+        document.getElementById('loading-section').innerHTML = '<p>' + (window.translationsData[getCurrentLanguage()]['status.network.error'] || '${t('status.network.error')}') + '</p>';
+        showStatus(window.translationsData[getCurrentLanguage()]['status.network.error'] || '${t('status.network.error')}', 'error');
       }
     }
     
     async function saveContent() {
       hideExpiryInfo();
       if (!isLoaded || !isUnlocked) {
-        showStatus('${t('detail.password.title')}', 'error');
+        showStatus(window.translationsData[getCurrentLanguage()]['detail.password.title'] || '${t('detail.password.title')}', 'error');
         return;
       }
       
       const contentElement = document.getElementById('content');
       const expiresElement = document.getElementById('expires');
       const passwordInputElement = document.getElementById('password-input');
+      const lang = getCurrentLanguage();
       
       if (!(contentElement instanceof HTMLTextAreaElement) || 
           !(expiresElement instanceof HTMLSelectElement)) {
-        showStatus('${t('status.error')}', 'error');
+        showStatus(window.translationsData[lang]['status.error'] || '${t('status.error')}', 'error');
         return;
       }
       
@@ -889,13 +891,13 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       // 验证键名
       if (!isValidKey(key)) {
-        showStatus('${t('key.error.invalid')}', 'error');
+        showStatus(window.translationsData[lang]['key.error.invalid'] || '${t('key.error.invalid')}', 'error');
         return;
       }
       
       // 检查内容是否为空
       if (content.trim() === '') {
-        showStatus('${t('content.error.empty')}', 'error');
+        showStatus(window.translationsData[lang]['content.error.empty'] || '${t('content.error.empty')}', 'error');
         return;
       }
       
@@ -917,22 +919,23 @@ export const generateDetailPage = (key: string, env: Env) => {
           originalContent = content;
           updateLastSaved();
           showExpiryDisplay(result.expires_at);
-          showStatus('${t('detail.save.success')}', 'success');
+          showStatus(window.translationsData[lang]['detail.save.success'] || '${t('detail.save.success')}', 'success');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showStatus(errorMessage, 'error');
         } else if (response.status === 401) {
-          showStatus('${t('status.read.wrongPassword')}', 'error');
+          showStatus(window.translationsData[lang]['status.read.wrongPassword'] || '${t('status.read.wrongPassword')}', 'error');
         } else {
-          showStatus('${t('detail.save.error')}', 'error');
+          showStatus(window.translationsData[lang]['detail.save.error'] || '${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        showStatus('${t('status.network.error')}', 'error');
+        showStatus(window.translationsData[lang]['status.network.error'] || '${t('status.network.error')}', 'error');
       }
     }
     
     function showExpiryDisplay(expiresAt) {
       const expiryDisplay = document.getElementById('expiry-display');
+      const lang = getCurrentLanguage();
       
       if (expiresAt) {
         const expiry = new Date(expiresAt);
@@ -945,13 +948,16 @@ export const generateDetailPage = (key: string, env: Env) => {
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           
           let timeLeft = '';
-          if (days > 0) timeLeft += \`\${days}\${t('time.day')} \`;
-          if (hours > 0) timeLeft += \`\${hours}\${t('time.hour')} \`;
-          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}\${t('time.minute')}\`;
+          if (days > 0) timeLeft += \`\${days}\${window.translationsData[lang]['time.day'] || '${t('time.day')}'} \`;
+          if (hours > 0) timeLeft += \`\${hours}\${window.translationsData[lang]['time.hour'] || '${t('time.hour')}'} \`;
+          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}\${window.translationsData[lang]['time.minute'] || '${t('time.minute')}'}\`;
           
-          expiryDisplay.textContent = \`${t('detail.expiry.remaining', 'zh').replace('{key}', key).replace('{timeLeft}', '\${timeLeft.trim()}').replace('{expiry}', '\${expiry.toLocaleString()}')}\`;
+          expiryDisplay.textContent = (window.translationsData[lang]['detail.expiry.remaining'] || '${t('detail.expiry.remaining')}')
+            .replace('{key}', key)
+            .replace('{timeLeft}', timeLeft.trim())
+            .replace('{expiry}', expiry.toLocaleString());
         } else {
-          expiryDisplay.textContent = \`${t('detail.expiry.expired', 'zh').replace('{key}', key)}\`;
+          expiryDisplay.textContent = (window.translationsData[lang]['detail.expiry.expired'] || '${t('detail.expiry.expired')}').replace('{key}', key);
         }
         expiryDisplay.style.display = 'block';
       }
@@ -966,34 +972,36 @@ export const generateDetailPage = (key: string, env: Env) => {
     
     function copyContent() {
       const content = document.getElementById('content').value;
+      const lang = getCurrentLanguage();
       
       // 检查内容是否为空
       if (content.trim() === '') {
-        showStatus('${t('content.error.empty')}', 'error');
+        showStatus(window.translationsData[lang]['content.error.empty'] || '${t('content.error.empty')}', 'error');
         return;
       }
       
       navigator.clipboard.writeText(content).then(() => {
-        showStatus('${t('detail.copy.success')}', 'success');
+        showStatus(window.translationsData[lang]['detail.copy.success'] || '${t('detail.copy.success')}', 'success');
       }).catch(() => {
-        showStatus('${t('status.copy.failed')}', 'error');
+        showStatus(window.translationsData[lang]['status.copy.failed'] || '${t('status.copy.failed')}', 'error');
       });
     }
     
     async function deleteContent() {
+      const lang = getCurrentLanguage();
+      if (!confirm(window.translationsData[lang]['detail.delete.confirm'] || '${t('detail.delete.confirm')}')) {
+        return;
+      }
+      
       hideExpiryInfo();
       if (!isUnlocked) {
-        showStatus('${t('detail.password.title')}', 'error');
+        showStatus(window.translationsData[lang]['detail.password.title'] || '${t('detail.password.title')}', 'error');
         return;
       }
       
       // 验证键名
       if (!isValidKey(key)) {
-        showStatus('${t('key.error.invalid')}', 'error');
-        return;
-      }
-      
-      if (!confirm('${t('detail.delete.confirm')}')) {
+        showStatus(window.translationsData[lang]['key.error.invalid'] || '${t('key.error.invalid')}', 'error');
         return;
       }
       
@@ -1018,19 +1026,19 @@ export const generateDetailPage = (key: string, env: Env) => {
           
           // 清除过期时间显示
           document.getElementById('expiry-display').style.display = 'none';
-          showStatus('${t('detail.delete.success')}', 'success');
+          showStatus(window.translationsData[lang]['detail.delete.success'] || '${t('detail.delete.success')}', 'success');
         } else if (response.status === 404) {
-          showStatus('${t('status.delete.notFound')}', 'error');
+          showStatus(window.translationsData[lang]['status.delete.notFound'] || '${t('status.delete.notFound')}', 'error');
         } else if (response.status === 401) {
-          showStatus('${t('status.read.wrongPassword')}', 'error');
+          showStatus(window.translationsData[lang]['status.read.wrongPassword'] || '${t('status.read.wrongPassword')}', 'error');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showStatus(errorMessage, 'error');
         } else {
-          showStatus('${t('detail.delete.error')}', 'error');
+          showStatus(window.translationsData[lang]['detail.delete.error'] || '${t('detail.delete.error')}', 'error');
         }
       } catch (error) {
-        showStatus('${t('status.network.error')}', 'error');
+        showStatus(window.translationsData[lang]['status.network.error'] || '${t('status.network.error')}', 'error');
       }
     }
     
@@ -1091,6 +1099,10 @@ export const generateDetailPage = (key: string, env: Env) => {
       if (savedLanguage !== 'zh') {
         updatePageLanguage(savedLanguage);
       }
+      
+      // 初始化字符数和最后保存时间显示
+      updateCharCount();
+      updateLastSaved();
       
       // 加载内容
       loadContent();
