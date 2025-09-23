@@ -1,4 +1,5 @@
 import { Env } from '../types';
+import { t } from '../i18n';
 
 // 生成主页HTML
 export const generateHomePage = (env: Env) => {
@@ -9,7 +10,7 @@ export const generateHomePage = (env: Env) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CF Clipboard - 网络文本共享</title>
+  <title>${t('site.title')}</title>
   <style>
     * {
       margin: 0;
@@ -398,6 +399,7 @@ export const generateHomePage = (env: Env) => {
       text-decoration: none;
       border-radius: 20px;
       margin-right: 10px;
+      margin-right: 10px;
       margin-bottom: 10px;
       transition: all 0.3s ease;
       font-size: 16px;
@@ -566,7 +568,7 @@ export const generateHomePage = (env: Env) => {
       <div class="header-actions"></div>
       <div class="header-content">
         <h1>📋 CF Clipboard</h1>
-        <p>基于 Cloudflare Workers 的网络文本共享服务</p>
+        <p>${t('site.description')}</p>
       </div>
       <div class="header-actions">
         <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
@@ -575,48 +577,48 @@ export const generateHomePage = (env: Env) => {
     
     ${requireAuth ? `
     <div class="form-group">
-      <label for="token">🔐 授权令牌</label>
-      <input type="password" id="token" placeholder="请输入访问令牌">
+      <label for="token">${t('auth.token')}</label>
+      <input type="password" id="token" placeholder="${t('auth.token.placeholder')}">
     </div>
     ` : ''}
     
     <div class="form-group">
-      <label for="key">🔑 存储键名</label>
+      <label for="key">${t('key.label')}</label>
       <div class="input-group">
-        <input type="text" id="key" placeholder="请输入键名，例如：my-note">
-        <button class="btn-icon" onclick="generateRandomKey()" title="生成随机键名">🎲</button>
-        <button class="btn-icon" onclick="copyKey()" title="复制键名">📋</button>
+        <input type="text" id="key" placeholder="${t('key.placeholder')}">
+        <button class="btn-icon" onclick="generateRandomKey()" title="生成随机键名">${t('key.generate')}</button>
+        <button class="btn-icon" onclick="copyKey()" title="复制键名">${t('key.copy')}</button>
       </div>
       <div id="key-error" style="color: #e53e3e; font-size: 16px; margin-top: 5px; display: none;"></div>
     </div>
     
     <div class="form-row">
       <div class="form-col">
-        <label for="expires">⏰ 有效时间</label>
+        <label for="expires">${t('expires.label')}</label>
         <select id="expires">
-          <option value="1h">1小时</option>
-          <option value="12h">12小时</option>
-          <option value="1d">1天</option>
-          <option value="3d" selected>3天</option>
-          <option value="7d">7天</option>
+          <option value="1h">${t('expires.1h')}</option>
+          <option value="12h">${t('expires.12h')}</option>
+          <option value="1d">${t('expires.1d')}</option>
+          <option value="3d" selected>${t('expires.3d')}</option>
+          <option value="7d">${t('expires.7d')}</option>
         </select>
       </div>
       
       <div class="form-col">
-        <label for="password">🔒 密码 (可选)</label>
-        <input type="password" id="password" placeholder="无密码">
+        <label for="password">${t('password.label')}</label>
+        <input type="password" id="password" placeholder="${t('password.placeholder')}">
       </div>
     </div>
     
     <div class="form-group">
-      <label for="content">📝 文本内容</label>
-      <textarea id="content" placeholder="在此输入或粘贴您的文本内容..."></textarea>
+      <label for="content">${t('content.label')}</label>
+      <textarea id="content" placeholder="${t('content.placeholder')}"></textarea>
     </div>
     
     <div class="button-group">
-      <button class="btn-action btn-primary" onclick="readContent()" id="read-btn">📖 读取</button>
-      <button class="btn-action btn-secondary" onclick="writeContent()" id="write-btn">💾 写入</button>
-      <button class="btn-action btn-danger" onclick="deleteContent()" id="delete-btn">🗑️ 删除</button>
+      <button class="btn-action btn-primary" onclick="readContent()" id="read-btn">${t('btn.read')}</button>
+      <button class="btn-action btn-secondary" onclick="writeContent()" id="write-btn">${t('btn.write')}</button>
+      <button class="btn-action btn-danger" onclick="deleteContent()" id="delete-btn">${t('btn.delete')}</button>
     </div>
     
     <div class="status" id="status"></div>
@@ -624,29 +626,29 @@ export const generateHomePage = (env: Env) => {
     <div class="expiry-info" id="expiry-info" style="display: none;">
       <div class="expiry-status">
         <span id="expiry-text"></span>
-        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="复制详情页链接" style="display: none;">📋</button>
+        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="复制详情页链接" style="display: none;">${t('btn.copyLink')}</button>
       </div>
     </div>
     
     <div class="quick-actions" style="display: none;">
-      <h3>🚀 快速操作</h3>
-      <a href="javascript:copyCurrentUrl()" class="quick-link" id="copy-link">复制链接</a>
-      <a href="javascript:generateRandomKey()" class="quick-link">随机键名</a>
+      <h3>${t('quickLinks.title')}</h3>
+      <a href="javascript:copyCurrentUrl()" class="quick-link" id="copy-link">${t('btn.copyLink')}</a>
+      <a href="javascript:generateRandomKey()" class="quick-link">${t('key.generate')}</a>
     </div>
     
     <!-- 删除确认模态框 -->
     <div id="delete-modal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>确认删除</h3>
+          <h3>${t('modal.delete.title')}</h3>
           <span class="close" id="close-modal">&times;</span>
         </div>
         <div class="modal-body">
-          <p>确定要删除键名 "<span id="delete-key-name"></span>" 的内容吗？此操作无法撤销。</p>
+          <p>${t('modal.delete.content', 'zh').replace('{key}', '<span id="delete-key-name"></span>')}</p>
         </div>
         <div class="modal-footer">
-          <button class="btn-action btn-secondary" id="cancel-delete">取消</button>
-          <button class="btn-action btn-danger" id="confirm-delete">删除</button>
+          <button class="btn-action btn-secondary" id="cancel-delete">${t('modal.delete.cancel')}</button>
+          <button class="btn-action btn-danger" id="confirm-delete">${t('modal.delete.confirm')}</button>
         </div>
       </div>
     </div>
@@ -730,7 +732,7 @@ export const generateHomePage = (env: Env) => {
       }
       
       if (!isValidKey(key)) {
-        errorDiv.textContent = '键名只能包含字母、数字、连字符(-)和下划线(_)';
+        errorDiv.textContent = '${t('key.error.invalid')}';
         errorDiv.style.display = 'block';
         return false;
       } else {
@@ -798,12 +800,12 @@ export const generateHomePage = (env: Env) => {
       
       // 验证键名
       if (!key) {
-        showError('请输入键名');
+        showError('${t('key.error.empty')}');
         return;
       }
       
       if (!isValidKey(key)) {
-        showError('键名只能包含字母、数字、连字符(-)和下划线(_)');
+        showError('${t('key.error.invalid')}');
         return;
       }
       
@@ -830,17 +832,17 @@ export const generateHomePage = (env: Env) => {
             const isPasswordProtected = response.headers.get('X-Password-Protected') === 'true';
             showExpiryInfo(expiresAt, key, isPasswordProtected);
             
-            showStatus('读取成功', 'success');
+            showStatus('${t('status.read.success')}', 'success');
           } else if (response.status === 401) {
-            showStatus('密码错误', 'error');
+            showStatus('${t('status.read.wrongPassword')}', 'error');
           } else if (response.status === 404) {
-            showStatus('键名不存在或已过期', 'error');
+            showStatus('${t('status.read.notFound')}', 'error');
             hideExpiryInfo();
           } else if (response.status === 400) {
             const errorMessage = await response.text();
             showError(errorMessage);
           } else {
-            showStatus('读取失败', 'error');
+            showStatus('${t('status.read.failed')}', 'error');
           }
         } else {
           // 如果没有提供密码，则使用GET方式请求（不需要密码验证）
@@ -859,21 +861,21 @@ export const generateHomePage = (env: Env) => {
             const isPasswordProtected = response.headers.get('X-Password-Protected') === 'true';
             showExpiryInfo(expiresAt, key, isPasswordProtected);
             
-            showStatus('读取成功', 'success');
+            showStatus('${t('status.read.success')}', 'success');
           } else if (response.status === 401) {
-            showStatus('此内容受密码保护，请输入密码', 'error');
+            showStatus('${t('status.read.passwordProtected')}', 'error');
           } else if (response.status === 404) {
-            showStatus('键名不存在或已过期', 'error');
+            showStatus('${t('status.read.notFound')}', 'error');
             hideExpiryInfo();
           } else if (response.status === 400) {
             const errorMessage = await response.text();
             showError(errorMessage);
           } else {
-            showStatus('读取失败', 'error');
+            showStatus('${t('status.read.failed')}', 'error');
           }
         }
       } catch (error) {
-        showStatus('网络错误', 'error');
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
@@ -885,18 +887,18 @@ export const generateHomePage = (env: Env) => {
       
       // 验证键名
       if (!key) {
-        showError('请输入键名');
+        showError('${t('key.error.empty')}');
         return;
       }
       
       if (!isValidKey(key)) {
-        showError('键名只能包含字母、数字、连字符(-)和下划线(_)');
+        showError('${t('key.error.invalid')}');
         return;
       }
       
       // 检查内容是否为空
       if (content.trim() === '') {
-        showError('内容不能为空');
+        showError('${t('content.error.empty')}');
         return;
       }
       
@@ -915,18 +917,18 @@ export const generateHomePage = (env: Env) => {
         
         if (response.ok) {
           const result = await response.json();
-          showStatus('写入成功', 'success');
+          showStatus('${t('status.write.success')}', 'success');
           showExpiryInfo(result.expires_at, key, password !== '');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showError(errorMessage);
         } else if (response.status === 401) {
-          showStatus('密码错误或需要密码', 'error');
+          showStatus('${t('status.read.wrongPassword')}', 'error');
         } else {
-          showStatus('写入失败', 'error');
+          showStatus('${t('status.error')}', 'error');
         }
       } catch (error) {
-        showStatus('网络错误', 'error');
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
@@ -950,11 +952,17 @@ export const generateHomePage = (env: Env) => {
           if (hours > 0) timeLeft += \`\${hours}小时 \`;
           if (minutes > 0 && days === 0) timeLeft += \`\${minutes}分钟\`;
           
-          const passwordText = isPasswordProtected ? ' (密码保护)' : '';
-          expiryText.textContent = \`键名 "\${key}"\${passwordText} 将在 \${timeLeft.trim()} 后过期 (\${expiry.toLocaleString()})\`;
+          const timeText = \`\${timeLeft.trim()} (\${expiry.toLocaleString()})\`;
+          const passwordText = isPasswordProtected ? \` \${t('modal.info.passwordProtected')}\` : '';
+          expiryText.textContent = t('modal.info.expires')
+            .replace('{key}', key)
+            .replace('{time}', timeText)
+            .replace('{passwordText}', passwordText);
         } else {
-          const passwordText = isPasswordProtected ? ' (密码保护)' : '';
-          expiryText.textContent = \`键名 "\${key}"\${passwordText} 已过期\`;
+          const passwordText = isPasswordProtected ? \` \${t('modal.info.passwordProtected')}\` : '';
+          expiryText.textContent = t('modal.info.expired')
+            .replace('{key}', key)
+            .replace('{passwordText}', passwordText);
         }
         
         // 设置复制按钮的键名属性并显示
@@ -978,15 +986,15 @@ export const generateHomePage = (env: Env) => {
       const key = copyDetailLinkBtn.getAttribute('data-key');
       
       if (!key) {
-        showStatus('无法获取键名', 'error');
+        showStatus('${t('status.key.fetchFailed')}', 'error');
         return;
       }
       
       const url = window.location.origin + '/detail/' + encodeURIComponent(key);
       navigator.clipboard.writeText(url).then(() => {
-        showStatus('详情页链接已复制到剪贴板', 'success');
+        showStatus('${t('link.copy.success')}', 'success');
       }).catch(() => {
-        showStatus('复制失败', 'error');
+        showStatus('${t('status.copy.failed')}', 'error');
       });
     }
     
@@ -996,12 +1004,12 @@ export const generateHomePage = (env: Env) => {
       
       // 验证键名
       if (!key) {
-        showError('请输入键名');
+        showError('${t('key.error.empty')}');
         return;
       }
       
       if (!isValidKey(key)) {
-        showError('键名只能包含字母、数字、连字符(-)和下划线(_)');
+        showError('${t('key.error.invalid')}');
         return;
       }
       
@@ -1016,7 +1024,7 @@ export const generateHomePage = (env: Env) => {
       
       if (!modal || !deleteKeyName) {
         // 如果模态框元素不存在，回退到使用confirm
-        if (confirm('确定要删除这个键的内容吗？')) {
+        if (confirm(t('modal.delete.content').replace('{key}', key))) {
           performDelete(key);
         }
         return;
@@ -1053,20 +1061,20 @@ export const generateHomePage = (env: Env) => {
           document.getElementById('content').value = '';
           hideExpiryInfo();
           updateButtonStates(); // 更新按钮状态
-          showStatus('删除成功', 'success');
+          showStatus('${t('status.delete.success')}', 'success');
         } else if (response.status === 404) {
-          showStatus('键名不存在', 'error');
+          showStatus('${t('status.delete.notFound')}', 'error');
           hideExpiryInfo(); // 只有在键名不存在时才隐藏过期信息
         } else if (response.status === 401) {
-          showStatus('密码错误或需要密码', 'error');
+          showStatus('${t('status.read.wrongPassword')}', 'error');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showError(errorMessage);
         } else {
-          showStatus('删除失败', 'error');
+          showStatus('${t('status.error')}', 'error');
         }
       } catch (error) {
-        showStatus('网络错误', 'error');
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
@@ -1075,18 +1083,18 @@ export const generateHomePage = (env: Env) => {
       
       // 验证键名
       if (!key) {
-        showError('请输入键名');
+        showError('${t('key.error.empty')}');
         return;
       }
       
       if (!isValidKey(key)) {
-        showError('键名只能包含字母、数字、连字符(-)和下划线(_)');
+        showError('${t('key.error.invalid')}');
         return;
       }
       
       const url = window.location.origin + '/detail/' + encodeURIComponent(key);
       navigator.clipboard.writeText(url).then(() => {
-        showStatus('链接已复制到剪贴板', 'success');
+        showStatus('${t('link.copy.success')}', 'success');
       });
     }
     
@@ -1096,19 +1104,19 @@ export const generateHomePage = (env: Env) => {
       
       // 验证键名
       if (!key) {
-        showError('请输入键名');
+        showError('${t('key.error.empty')}');
         return;
       }
       
       if (!isValidKey(key)) {
-        showError('键名只能包含字母、数字、连字符(-)和下划线(_)');
+        showError('${t('key.error.invalid')}');
         return;
       }
       
       navigator.clipboard.writeText(key).then(() => {
-        showStatus('键名已复制到剪贴板', 'success');
+        showStatus('${t('status.copy.success')}', 'success');
       }).catch(() => {
-        showStatus('复制失败', 'error');
+        showStatus('${t('status.copy.failed')}', 'error');
       });
     }
     

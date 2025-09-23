@@ -1,4 +1,5 @@
 import { Env } from '../types';
+import { t } from '../i18n';
 
 // 生成详细页面HTML
 export const generateDetailPage = (key: string, env: Env) => {
@@ -9,7 +10,7 @@ export const generateDetailPage = (key: string, env: Env) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CF Clipboard - ${key}</title>
+  <title>${t('detail.title')} - ${key}</title>
   <style>
     * {
       margin: 0;
@@ -532,32 +533,32 @@ export const generateDetailPage = (key: string, env: Env) => {
   <div class="container">
     <div class="header">
       <div class="title">
-        <h1>📋 文档编辑</h1>
+        <h1>📋 ${t('detail.title')}</h1>
         <div class="key-name">${key}</div>
       </div>
       <div class="nav-buttons">
-        <a href="/" class="btn btn-outline">← 返回首页</a>
+        <a href="/" class="btn btn-outline">← ${t('detail.notFound.create')}</a>
         <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
       </div>
     </div>
     
     ${requireAuth ? `
     <div class="auth-section">
-      <input type="password" id="token" placeholder="请输入访问令牌">
+      <input type="password" id="token" placeholder="${t('detail.token.placeholder')}">
     </div>
     ` : ''}
     
     <!-- 加载状态 -->
     <div class="loading" id="loading-section">
-      <p>正在加载内容...</p>
+      <p>${t('detail.loading')}</p>
     </div>
     
     <!-- 密码输入区域（默认隐藏） -->
     <div class="password-section" id="password-section" style="display: none;">
-      <h3>🔒 此内容受密码保护</h3>
-      <p>请输入密码以访问和编辑内容</p>
-      <input type="password" id="password-input" placeholder="请输入密码">
-      <button class="btn btn-secondary" onclick="unlockContent()">解锁</button>
+      <h3>${t('detail.password.title')}</h3>
+      <p>${t('detail.password.description')}</p>
+      <input type="password" id="password-input" placeholder="${t('detail.password.placeholder')}">
+      <button class="btn btn-secondary" onclick="unlockContent()">${t('detail.password.submit')}</button>
       <div class="status" id="password-status"></div>
     </div>
     
@@ -565,31 +566,31 @@ export const generateDetailPage = (key: string, env: Env) => {
     <div id="content-area" style="display: none;">
       <div class="editor-header">
         <div class="editor-controls">
-          <label for="expires">⏰ 有效时间：</label>
+          <label for="expires">${t('expires.label')}：</label>
           <select id="expires">
-            <option value="1h">1小时</option>
-            <option value="12h">12小时</option>
-            <option value="1d">1天</option>
-            <option value="3d" selected>3天</option>
-            <option value="7d">7天</option>
+            <option value="1h">${t('expires.1h')}</option>
+            <option value="12h">${t('expires.12h')}</option>
+            <option value="1d">${t('expires.1d')}</option>
+            <option value="3d" selected>${t('expires.3d')}</option>
+            <option value="7d">${t('expires.7d')}</option>
           </select>
         </div>
         <div class="expiry-display" id="expiry-display" style="display: none;"></div>
       </div>
       
       <div class="editor">
-        <textarea id="content" placeholder="正在加载内容..." readonly></textarea>
+        <textarea id="content" placeholder="${t('detail.content.loading')}" readonly></textarea>
       </div>
       
       <div class="editor-actions">
         <div class="editor-info">
-          <span id="char-count">字符数: 0</span> | 
-          <span id="last-saved">未保存</span>
+          <span id="char-count">${t('detail.charCount').replace('{count}', '0')}</span> | 
+          <span id="last-saved">${t('detail.lastSaved').replace('{time}', '未保存')}</span>
         </div>
         <div class="action-buttons">
-          <button class="btn btn-secondary" onclick="saveContent()" id="save-btn">💾 保存</button>
-          <button class="btn btn-primary" onclick="copyContent()" id="copy-btn">📋 复制</button>
-          <button class="btn btn-danger" onclick="deleteContent()" id="delete-btn">🗑️ 删除</button>
+          <button class="btn btn-secondary" onclick="saveContent()" id="save-btn">${t('detail.toolbar.save')}</button>
+          <button class="btn btn-primary" onclick="copyContent()" id="copy-btn">${t('detail.toolbar.copy')}</button>
+          <button class="btn btn-danger" onclick="deleteContent()" id="delete-btn">${t('detail.toolbar.delete')}</button>
         </div>
       </div>
     </div>
@@ -672,12 +673,12 @@ export const generateDetailPage = (key: string, env: Env) => {
     
     function updateCharCount() {
       const content = document.getElementById('content').value;
-      document.getElementById('char-count').textContent = \`字符数: \${content.length}\`;
+      document.getElementById('char-count').textContent = \`${t('detail.charCount').replace('{count}', '\${content.length}')}\`;
     }
     
     function updateLastSaved() {
       const now = new Date();
-      document.getElementById('last-saved').textContent = \`最后保存: \${now.toLocaleTimeString()}\`;
+      document.getElementById('last-saved').textContent = t('detail.lastSaved').replace('{time}', now.toLocaleTimeString());
     }
     
     // 解锁受保护的内容
@@ -685,7 +686,7 @@ export const generateDetailPage = (key: string, env: Env) => {
       const password = document.getElementById('password-input').value;
       
       if (!password) {
-        showPasswordStatus('请输入密码', 'error');
+        showPasswordStatus('${t('detail.password.error')}', 'error');
         return;
       }
       
@@ -704,7 +705,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           const content = await response.text();
           document.getElementById('content').value = content;
           originalContent = content;
-          document.getElementById('content').placeholder = '在此编辑您的文本内容...';
+          document.getElementById('content').placeholder = '${t('detail.content.edit')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏密码区域，显示内容区域
@@ -719,17 +720,17 @@ export const generateDetailPage = (key: string, env: Env) => {
           const expiresAt = response.headers.get('X-Expires-At');
           showExpiryDisplay(expiresAt);
           
-          showStatus('内容解锁成功', 'success');
+          showStatus('${t('detail.save.success')}', 'success');
           updateCharCount();
         } else if (response.status === 401) {
-          showPasswordStatus('密码错误', 'error');
+          showPasswordStatus('${t('detail.password.error')}', 'error');
         } else if (response.status === 404) {
-          showPasswordStatus('内容不存在或已过期', 'error');
+          showPasswordStatus('${t('detail.notFound.description')}', 'error');
         } else {
-          showPasswordStatus('解锁失败', 'error');
+          showPasswordStatus('${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        showPasswordStatus('网络错误', 'error');
+        showPasswordStatus('${t('status.network.error')}', 'error');
       }
     }
     
@@ -743,8 +744,8 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       // 验证键名
       if (!isValidKey(key)) {
-        document.getElementById('loading-section').innerHTML = '<p>键名格式无效，只能包含字母、数字、连字符(-)和下划线(_)</p>';
-        showStatus('键名格式无效', 'error');
+        document.getElementById('loading-section').innerHTML = '<p>${t('key.error.invalid')}</p>';
+        showStatus('${t('key.error.invalid')}', 'error');
         return;
       }
       
@@ -760,7 +761,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           // 直接显示内容
           document.getElementById('content').value = content;
           originalContent = content;
-          document.getElementById('content').placeholder = '在此编辑您的文本内容...';
+          document.getElementById('content').placeholder = '${t('detail.content.edit')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏加载区域和密码区域，显示内容区域
@@ -774,7 +775,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           const expiresAt = response.headers.get('X-Expires-At');
           showExpiryDisplay(expiresAt);
           
-          showStatus('内容加载成功', 'success');
+          showStatus('${t('detail.save.success')}', 'success');
           updateCharCount();
         } else if (response.status === 401) {
           // 需要密码，显示密码输入区域
@@ -783,7 +784,7 @@ export const generateDetailPage = (key: string, env: Env) => {
           document.getElementById('content-area').style.display = 'none';
         } else if (response.status === 404) {
           // 直接显示内容区域（新文档）
-          document.getElementById('content').placeholder = '这是一个新文档，开始输入内容...';
+          document.getElementById('content').placeholder = '${t('detail.content.new')}';
           document.getElementById('content').removeAttribute('readonly');
           
           // 隐藏加载区域和密码区域，显示内容区域
@@ -793,26 +794,26 @@ export const generateDetailPage = (key: string, env: Env) => {
           
           isLoaded = true;
           
-          showStatus('这是一个新文档', 'success');
+          showStatus('${t('detail.notFound.title')}', 'success');
           updateCharCount();
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           document.getElementById('loading-section').innerHTML = \`<p>\${errorMessage}</p>\`;
           showStatus(errorMessage, 'error');
         } else {
-          document.getElementById('loading-section').innerHTML = '<p>加载失败，请重试</p>';
-          showStatus('加载失败', 'error');
+          document.getElementById('loading-section').innerHTML = '<p>${t('detail.save.error')}</p>';
+          showStatus('${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        document.getElementById('loading-section').innerHTML = '<p>网络错误，请检查连接</p>';
-        showStatus('网络错误', 'error');
+        document.getElementById('loading-section').innerHTML = '<p>${t('status.network.error')}</p>';
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
     async function saveContent() {
       hideExpiryInfo();
       if (!isLoaded || !isUnlocked) {
-        showStatus('请先解锁内容', 'error');
+        showStatus('${t('detail.password.title')}', 'error');
         return;
       }
       
@@ -822,7 +823,7 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       if (!(contentElement instanceof HTMLTextAreaElement) || 
           !(expiresElement instanceof HTMLSelectElement)) {
-        showStatus('页面元素加载异常', 'error');
+        showStatus('${t('status.error')}', 'error');
         return;
       }
       
@@ -832,13 +833,13 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       // 验证键名
       if (!isValidKey(key)) {
-        showStatus('键名格式无效，只能包含字母、数字、连字符(-)和下划线(_)', 'error');
+        showStatus('${t('key.error.invalid')}', 'error');
         return;
       }
       
       // 检查内容是否为空
       if (content.trim() === '') {
-        showStatus('内容不能为空', 'error');
+        showStatus('${t('content.error.empty')}', 'error');
         return;
       }
       
@@ -860,17 +861,17 @@ export const generateDetailPage = (key: string, env: Env) => {
           originalContent = content;
           updateLastSaved();
           showExpiryDisplay(result.expires_at);
-          showStatus('保存成功', 'success');
+          showStatus('${t('detail.save.success')}', 'success');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showStatus(errorMessage, 'error');
         } else if (response.status === 401) {
-          showStatus('密码错误或需要密码', 'error');
+          showStatus('${t('status.read.wrongPassword')}', 'error');
         } else {
-          showStatus('保存失败', 'error');
+          showStatus('${t('detail.save.error')}', 'error');
         }
       } catch (error) {
-        showStatus('网络错误', 'error');
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
@@ -892,9 +893,9 @@ export const generateDetailPage = (key: string, env: Env) => {
           if (hours > 0) timeLeft += \`\${hours}小时 \`;
           if (minutes > 0 && days === 0) timeLeft += \`\${minutes}分钟\`;
           
-          expiryDisplay.textContent = \`键名 "\${key}" 将在 \${timeLeft.trim()} 后过期 (\${expiry.toLocaleString()})\`;
+          expiryDisplay.textContent = \`${t('detail.expiry.remaining', 'zh').replace('{key}', key).replace('{timeLeft}', '\${timeLeft.trim()}').replace('{expiry}', '\${expiry.toLocaleString()}')}\`;
         } else {
-          expiryDisplay.textContent = \`键名 "\${key}" 已过期\`;
+          expiryDisplay.textContent = \`${t('detail.expiry.expired', 'zh').replace('{key}', key)}\`;
         }
         expiryDisplay.style.display = 'block';
       }
@@ -912,31 +913,31 @@ export const generateDetailPage = (key: string, env: Env) => {
       
       // 检查内容是否为空
       if (content.trim() === '') {
-        showStatus('内容不能为空', 'error');
+        showStatus('${t('content.error.empty')}', 'error');
         return;
       }
       
       navigator.clipboard.writeText(content).then(() => {
-        showStatus('内容已复制到剪贴板', 'success');
+        showStatus('${t('detail.copy.success')}', 'success');
       }).catch(() => {
-        showStatus('复制失败', 'error');
+        showStatus('${t('status.copy.failed')}', 'error');
       });
     }
     
     async function deleteContent() {
       hideExpiryInfo();
       if (!isUnlocked) {
-        showStatus('请先解锁内容', 'error');
+        showStatus('${t('detail.password.title')}', 'error');
         return;
       }
       
       // 验证键名
       if (!isValidKey(key)) {
-        showStatus('键名格式无效，只能包含字母、数字、连字符(-)和下划线(_)', 'error');
+        showStatus('${t('key.error.invalid')}', 'error');
         return;
       }
       
-      if (!confirm('确定要删除这个文档吗？此操作无法撤销。')) {
+      if (!confirm('${t('detail.delete.confirm')}')) {
         return;
       }
       
@@ -961,19 +962,19 @@ export const generateDetailPage = (key: string, env: Env) => {
           
           // 清除过期时间显示
           document.getElementById('expiry-display').style.display = 'none';
-          showStatus('删除成功', 'success');
+          showStatus('${t('detail.delete.success')}', 'success');
         } else if (response.status === 404) {
-          showStatus('文档不存在', 'error');
+          showStatus('${t('status.delete.notFound')}', 'error');
         } else if (response.status === 401) {
-          showStatus('密码错误或需要密码', 'error');
+          showStatus('${t('status.read.wrongPassword')}', 'error');
         } else if (response.status === 400) {
           const errorMessage = await response.text();
           showStatus(errorMessage, 'error');
         } else {
-          showStatus('删除失败', 'error');
+          showStatus('${t('detail.delete.error')}', 'error');
         }
       } catch (error) {
-        showStatus('网络错误', 'error');
+        showStatus('${t('status.network.error')}', 'error');
       }
     }
     
