@@ -577,7 +577,8 @@ export const generateHomePage = (env: Env) => {
           <div id="languageDropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 5px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 120px;">
             <a href="#" class="language-option" data-lang="zh" style="display: block; padding: 12px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #eee;">🇨🇳 中文</a>
             <a href="#" class="language-option" data-lang="en" style="display: block; padding: 12px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #eee;">🇺🇸 English</a>
-            <a href="#" class="language-option" data-lang="ja" style="display: block; padding: 12px 16px; text-decoration: none; color: #333;">🇯🇵 日本語</a>
+            <a href="#" class="language-option" data-lang="ja" style="display: block; padding: 12px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #eee;">🇯🇵 日本語</a>
+            <a href="#" class="language-option" data-lang="ru" style="display: block; padding: 12px 16px; text-decoration: none; color: #333;">🇷🇺 Русский</a>
           </div>
         </div>
         <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}">🌙</button>
