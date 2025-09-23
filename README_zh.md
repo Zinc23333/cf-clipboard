@@ -51,7 +51,8 @@
 5. 更新 `wrangler.jsonc` 配置文件:
    - 将上一步中的 `database_id` 填入 `d1_databases` 配置中
 
-6. 初始化数据库表结构:
+6. (可选)初始化数据库表结构:
+   项目在运行时会自动初始化数据库表结构，可以不手动创建
    ```bash
    # 生产环境
    npm run db:migrate
@@ -62,12 +63,12 @@
 
 7. 本地开发:
    ```bash
-   npm run dev
+   wrangler dev
    ```
 
 8. 部署到 Cloudflare:
    ```bash
-   npm run deploy
+   wranger deploy
    ```
 
 ### 环境变量配置
@@ -77,6 +78,11 @@
 "vars": { 
   "TOKEN": "your-secret-token-here"
 }
+```
+
+或者使用更安全的方法：
+``` bash
+wranger secret put TOKEN
 ```
 
 ## API 接口
