@@ -571,7 +571,7 @@ export const generateHomePage = (env: Env) => {
         <p>${t('site.description')}</p>
       </div>
       <div class="header-actions">
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}">🌙</button>
       </div>
     </div>
     
@@ -586,8 +586,8 @@ export const generateHomePage = (env: Env) => {
       <label for="key">${t('key.label')}</label>
       <div class="input-group">
         <input type="text" id="key" placeholder="${t('key.placeholder')}">
-        <button class="btn-icon" onclick="generateRandomKey()" title="生成随机键名">${t('key.generate')}</button>
-        <button class="btn-icon" onclick="copyKey()" title="复制键名">${t('key.copy')}</button>
+        <button class="btn-icon" onclick="generateRandomKey()" title="${t('btn.generateKey')}">${t('key.generate')}</button>
+        <button class="btn-icon" onclick="copyKey()" title="${t('btn.copyKey')}">${t('key.copy')}</button>
       </div>
       <div id="key-error" style="color: #e53e3e; font-size: 16px; margin-top: 5px; display: none;"></div>
     </div>
@@ -626,7 +626,7 @@ export const generateHomePage = (env: Env) => {
     <div class="expiry-info" id="expiry-info" style="display: none;">
       <div class="expiry-status">
         <span id="expiry-text"></span>
-        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="复制详情页链接" style="display: none;">${t('btn.copyLink')}</button>
+        <button class="btn-icon copy-link-btn" id="copy-detail-link" title="${t('btn.copyDetailLink')}" style="display: none;">${t('btn.copyLink')}</button>
       </div>
     </div>
     
@@ -948,9 +948,9 @@ export const generateHomePage = (env: Env) => {
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           
           let timeLeft = '';
-          if (days > 0) timeLeft += \`\${days}天 \`;
-          if (hours > 0) timeLeft += \`\${hours}小时 \`;
-          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}分钟\`;
+          if (days > 0) timeLeft += \`\${days}\${t('time.day')} \`;
+          if (hours > 0) timeLeft += \`\${hours}\${t('time.hour')} \`;
+          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}\${t('time.minute')}\`;
           
           const timeText = \`\${timeLeft.trim()} (\${expiry.toLocaleString()})\`;
           const passwordText = isPasswordProtected ? \` \${t('modal.info.passwordProtected')}\` : '';

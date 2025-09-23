@@ -538,7 +538,7 @@ export const generateDetailPage = (key: string, env: Env) => {
       </div>
       <div class="nav-buttons">
         <a href="/" class="btn btn-outline">← ${t('detail.notFound.create')}</a>
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="${t('btn.themeToggle')}">🌙</button>
       </div>
     </div>
     
@@ -585,7 +585,7 @@ export const generateDetailPage = (key: string, env: Env) => {
       <div class="editor-actions">
         <div class="editor-info">
           <span id="char-count">${t('detail.charCount').replace('{count}', '0')}</span> | 
-          <span id="last-saved">${t('detail.lastSaved').replace('{time}', '未保存')}</span>
+          <span id="last-saved">${t('detail.lastSaved').replace('{time}', t('status.notSaved'))}</span>
         </div>
         <div class="action-buttons">
           <button class="btn btn-secondary" onclick="saveContent()" id="save-btn">${t('detail.toolbar.save')}</button>
@@ -889,9 +889,9 @@ export const generateDetailPage = (key: string, env: Env) => {
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           
           let timeLeft = '';
-          if (days > 0) timeLeft += \`\${days}天 \`;
-          if (hours > 0) timeLeft += \`\${hours}小时 \`;
-          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}分钟\`;
+          if (days > 0) timeLeft += \`\${days}\${t('time.day')} \`;
+          if (hours > 0) timeLeft += \`\${hours}\${t('time.hour')} \`;
+          if (minutes > 0 && days === 0) timeLeft += \`\${minutes}\${t('time.minute')}\`;
           
           expiryDisplay.textContent = \`${t('detail.expiry.remaining', 'zh').replace('{key}', key).replace('{timeLeft}', '\${timeLeft.trim()}').replace('{expiry}', '\${expiry.toLocaleString()}')}\`;
         } else {
