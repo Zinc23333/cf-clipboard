@@ -17,8 +17,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB",  // Don't change it
-			"database_name": "clipboard-db"
-			// "database_id": "325aa4dd-9d7c-4001-b749-ebe854d043e5"  // ! Change it - will be automatically set during deployment via Deploy Button
+			"database_name": "clipboard-db",
+			"database_id": ""  // ! Change it
 		}
 	],
 	/**
