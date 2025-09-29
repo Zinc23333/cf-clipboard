@@ -21,7 +21,7 @@
 				"description": "D1 database for storing clipboard data. Will be automatically created during deployment via Deploy Button."
 			}
 		}
-	}
+	},
 	"keywords": [
 		"cloudflare",
 		"workers",
